@@ -1,4 +1,4 @@
-# How to Run the "Crazy UI" Web App
+# How to Run theWeb App
 
 Follow these steps once you have successfully run the **Ensemble & Export** cell in your notebook (which creates `model_bundle.joblib`).
 
