@@ -47,11 +47,17 @@ export default function PredictionForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
+
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || 'Analysis failed. Please check your inputs.');
+      }
+
       setResult(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error:', error);
-      alert('Failed to connect to backend. Make sure FastAPI is running on port 8000.');
+      alert(error.message || 'Failed to connect to backend. Make sure FastAPI is running on port 8000.');
     } finally {
       setLoading(false);
     }
@@ -300,16 +306,22 @@ export default function PredictionForm() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
-                    <p className="text-xs text-gray-500 mb-1">Probability: YES</p>
-                    <p className="text-2xl font-bold text-cyan-400">{(result.probabilities.Yes * 100).toFixed(1)}%</p>
+                {result.probabilities ? (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+                      <p className="text-xs text-gray-500 mb-1">Probability: YES</p>
+                      <p className="text-2xl font-bold text-cyan-400">{(result.probabilities.Yes * 100).toFixed(1)}%</p>
+                    </div>
+                    <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+                      <p className="text-xs text-gray-500 mb-1">Probability: NO</p>
+                      <p className="text-2xl font-bold text-purple-400">{(result.probabilities.No * 100).toFixed(1)}%</p>
+                    </div>
                   </div>
-                  <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
-                    <p className="text-xs text-gray-500 mb-1">Probability: NO</p>
-                    <p className="text-2xl font-bold text-purple-400">{(result.probabilities.No * 100).toFixed(1)}%</p>
+                ) : (
+                  <div className="bg-white/5 rounded-2xl p-4 text-center">
+                    <p className="text-gray-400 text-sm italic">Probability metrics temporarily unavailable.</p>
                   </div>
-                </div>
+                )}
               </div>
             </motion.div>
           ) : (
